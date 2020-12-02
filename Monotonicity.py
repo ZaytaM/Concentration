@@ -132,7 +132,7 @@ def curve_mass(Lmin,Lmax,d,lmb,qmin,qmax,Nq,NL):
     M=zeros((len(Q),len(Larray)))
     E=zeros((len(Q),len(Larray)))
 
-    fig, axes = subplots(nrows=len(Q), ncols=1, sharex=True, sharey=False)
+    fig, axes = subplots(nrows=len(Q), ncols=1, sharex=True, sharey=False, figsize=(20,20))
     for j in range(len(Q)):
       for i in range(len(Larray)):
           mopt,Copt,fopt=find_mass(Larray[i],d,Q[j],lmb)
@@ -154,6 +154,7 @@ Nq=10 #number of points to compute
 Lmin=0.01
 Lmax=5
 NL=10
+tol=0.1
 
 
 for d in [4,5,6,7,8,9,10]:
@@ -167,7 +168,7 @@ for d in [4,5,6,7,8,9,10]:
         m1=M[k,j+1]-M[k,j]
         e=max(E[k,j+1],E[k,j])
       if m1>m:
-        if e<0.1:
+        if e<tol:
           m=M[k,j+1]-M[k,j]
     with open("derivative1.txt",'a') as arq:
       arq.write('\n')
