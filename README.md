@@ -5,7 +5,7 @@ This repository contains the python code related to the manuscript "Fast Diffusi
 In the Results folder you can find the output of the scripts.
 
 
-In even_lmb.py:
+The script even_lmb.py deal with the case of lambda= 6, 8 and 10:
 
 -) Option 1 finds the mass for just one specific value of alpha.
 
