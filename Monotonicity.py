@@ -8,8 +8,6 @@ Created on Sat Sep 26 09:50:10 2020
 Edited by Matias G. Delgadino
 """
 from numpy import *
-#import matplotlib
-#matplotlib.use('Agg')
 from matplotlib.pyplot import plot, figure, title, savefig, subplots
 from scipy.optimize import minimize
 from scipy.integrate import quad
@@ -20,12 +18,10 @@ from pickle import dump, load
 # Carillo, Delgadino, Dolbeault, Frank & Hoffmann, J. Math. Pures Appl. (2019)
 # Computes the nonlinear solution the mass of the solution to the Euler-Lagrange equation, for a fixed Lagrange multiplier L
 
-
 ##############################################################
 ##############################################################
 ####PARAMETERS TO BE DEFINED FOR THE COMPUTATION
 Npert=10 # Nb of random perturbations to try for finding the solution
-use_nonuniform_grid=True #use of a non-uniform grid or not (might give slightly better results when there is a delta)
 be_silent=False #whether to print more info or not
 save_fig=True #whether to save the results on the disk
 ##############################################################
@@ -97,7 +93,7 @@ def solve_AB(C_init,L,d,qq,lmb):
 
 #finds the fixed point solution by running solve_AB from Npert random C_init. Returns the mass of the best one
 def find_mass(L,d,qq,lmb):
-    #finds minimum starting from A=1 and B=1
+    #finds minimum starting from C_i=1
     lenC=int(lmb/2)-1
     C_init=10*ones(lenC)
     Copt,fopt=solve_AB(C_init,L,d,qq,lmb)
@@ -117,7 +113,6 @@ def find_mass(L,d,qq,lmb):
 #main function to plot the mass of the fixed point solution on [amin,amax] with Na points
 def curve_mass(Lmin,Lmax,d,lmb,qmin,qmax,Nq,NL):
     print('Computing the mass of the solution with a given Langrange multiplier',d,'d at lmb=',lmb,'...')
-#    print('Parameters are: N=',N,'Rmax=',Rmax,'Adapted grid=',str(use_nonuniform_grid))
     Q=arange(qmin,qmax,(qmax-qmin)/Nq)
     Larray=arange(Lmin,Lmax,(Lmax-Lmin)/NL)
     M=zeros((len(Q),len(Larray)))
@@ -135,34 +130,73 @@ def curve_mass(Lmin,Lmax,d,lmb,qmin,qmax,Nq,NL):
     if save_fig==True:
         basefilename='d'+str(d)+'_lmb'+str(lmb)+'_q'+str(qmin)+'-'+str(qmax)+'_Npts'+str(Nq)+'_L'+str(Lmin)+'-'+str(Lmax)+'_NL'+str(NL)
         fig.savefig(basefilename+'_LM'+'.pdf')
-    #     dump([Larray,M,Q], open(basefilename+'.p', "wb"))
     return Larray,M,Q,E
 
+#function to plot the mass of the fixed point solution with L=0 on [amin,amax] with Na points
+def curve_mass_a(d,lmb,amin,amax,Na):
+    print('Computing the mass of the simple solution in',d,'d at lmb=',lmb,'...')
+    A=arange(amin,amax,(amax-amin)/Na)
+    M=zeros(len(A))
+    Q=zeros(len(A))
+    for i in range(len(A)):
+        Q[i]=q(d,A[i],lmb)        
+        mopt,Copt=find_mass(0,d,A[i],lmb)
+        M[i]=mopt
+    #plots the mass in terms of a and q
+    fig1, ax1=subplots(1)
+    ax1.plot(A,M,'b')
+    ax1.plot(A,ones(len(A)),'k')
+    fig2, ax2=subplots(1)
+    ax2.plot(Q,M,'b')
+    ax2.plot(Q,ones(len(A)),'k')
+    #saves everything on the disk
+    if save_fig==True: 
+        basefilename='d'+str(d)+'_exact_lmb'+str(lmb)+'_a'+str(amin)+'-'+str(amax)+'_Npts'+str(Na)
+        fig1.savefig(basefilename+'_AM'+'.pdf')
+        fig2.savefig(basefilename+'_QM'+'.pdf')
+        dump([A,M,Q], open(basefilename+'.p', "wb"))        
+    return A,M,Q
+    
 ##########################################################
 ####MAIN PROGRAM TO BE RUN
 ##########################################################
-Nq=10 #number of points to compute
-Lmin=0.01
-Lmax=5
-NL=10
-tol=0.1
+d=5 #space dimension
+lmb=6 #Interaction Parameter Lambda
+
+##option 1: find the mass for just one a
+#a=0.9
+#find_mass(d,a,lmb)
+
+##option 2: find the mass for many a's and plot the curve
+amin=0.6 #minimal value of a for the plot
+amax=1.1 #maximal value of a for the plot
+Na=20 #number of points to compute
+A,M,Q=curve_mass_a(d,lmb,amin,amax,Na) #plots the curve
+
+# ##option 3: find the mass for dimensions, many L's and q's ploting the curve
+# Nq=10 #number of points to compute
+# Lmin=0.01
+# Lmax=5
+# NL=10
+# tol=0.1
+
+# for d in [4,5,6,7,8,9,10]:
+#   for lmb in [6,8,10]:
+#     qmin=d/(d+lmb) #minimal value of a for the plot
+#     qmax=1 #maximal value of a for the plot
+#     Larray,M,Q,E=curve_mass(Lmin,Lmax,d,lmb,qmin,qmax,Nq,NL) #plots the curve
+#     m=-100
+#     for k in range(Nq):
+#       for j in range (NL-1):
+#         m1=M[k,j+1]-M[k,j]
+#         e=max(E[k,j+1],E[k,j])
+#       if m1>m:
+#         if e<tol:
+#           m=M[k,j+1]-M[k,j]
+#     with open("derivative1.txt",'a') as arq:
+#       arq.write('\n')
+#       arq.write('d'+str(d)+'_lmb'+str(lmb)+'_q'+str(qmin)+'-'+str(qmax)+'_Npts'+str(Nq)+'_L'+str(Lmin)+'-'+str(Lmax)+'_NL'+str(NL))
+#       arq.write('\n')
+#       arq.write(str(m))
 
 
-for d in [4,5,6,7,8,9,10]:
-  for lmb in [6,8,10]:
-    qmin=d/(d+lmb) #minimal value of a for the plot
-    qmax=1 #maximal value of a for the plot
-    Larray,M,Q,E=curve_mass(Lmin,Lmax,d,lmb,qmin,qmax,Nq,NL) #plots the curve
-    m=-100
-    for k in range(Nq):
-      for j in range (NL-1):
-        m1=M[k,j+1]-M[k,j]
-        e=max(E[k,j+1],E[k,j])
-      if m1>m:
-        if e<tol:
-          m=M[k,j+1]-M[k,j]
-    with open("derivative1.txt",'a') as arq:
-      arq.write('\n')
-      arq.write('d'+str(d)+'_lmb'+str(lmb)+'_q'+str(qmin)+'-'+str(qmax)+'_Npts'+str(Nq)+'_L'+str(Lmin)+'-'+str(Lmax)+'_NL'+str(NL))
-      arq.write('\n')
-      arq.write(str(m))
