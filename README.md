@@ -4,6 +4,9 @@ This repository contains the python code related to the manuscript "Fast Diffusi
 
 In the Results folder you can find the output of the scripts.
 
+
+
+
 The script even_lmb.py deals with the cases of lambda=4, 6, 8 and 10:
 
 -) Option 1 finds the mass for just one specific value of alpha.
@@ -11,6 +14,9 @@ The script even_lmb.py deals with the cases of lambda=4, 6, 8 and 10:
 -) Option 2 calculates the mass of the solution to the Euler-Lagrange equation with parameter L=0 for different values of alpha. The output can be found in the folder mass within the Results. Some of these images are included in figure 1 of the paper.
 
 -) Option 3 calculates the mass of the solution to the Euler-Lagrange equation for different values of L and q. It checks the monotonicity of the mass with respect to parameter L for a fixed value of q. The output can be found in the folder monotonicity within the Results.
+
+
+
 
 
 The script HLS_Eq_Pol.py deals with any lambda for L=0, with the density approximated by a polynomial as explained in the paper. For simplicity the integrals are now discretized on a regular grid.
