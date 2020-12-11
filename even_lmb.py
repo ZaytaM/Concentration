@@ -16,7 +16,7 @@ from pickle import dump, load
 
 # Case lmb=2*k with k>1 in the reversed Hardy-Littlewood-Sobolev inequality of
 # Carillo, Delgadino, Dolbeault, Frank & Hoffmann, J. Math. Pures Appl. (2019)
-# Computes the nonlinear solution which behaves like $x^{-2/(1-q)}$ at the origin. 
+# Computes the nonlinear solution to the Euler Lagrange equation for diferent values of the Lagrange multiplier L. 
 # Condensation happens when its mass is <1
 
 ##############################################################
